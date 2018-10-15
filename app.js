@@ -17,6 +17,27 @@ var connector = new builder.ChatConnector({
 server.post('/api/messages', connector.listen());
 
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
-var bot = new builder.UniversalBot(connector, function (session) {
-    session.send("You said: %s", session.message.text);
+var bot = new builder.UniversalBot(connector);
+
+bot.beginDialogAction('restart', '/restart', {
+    matches: /^good morning$|^hi ad$|^chào bạn$|^chào ad$|^chao ad$|^ad oi$|^ad ơi$|^ad$|^ad$|^restart$|^retry$|^'restart'$|^chao ban$|^bat dau$|^start$|^hi$|^hi $|^hello $|^hello$|^bắt đầu$|^xin chào$|^xin chao$/i
 });
+bot.dialog('/restart', [function (session) {
+    session.send("/restart dialog");
+    session.endConversation();
+}]);
+
+bot.dialog('/', [function (session) {
+    session.send("/main dialog: when you say anything don't match with dialog i defined, it will go into main dialog");
+    session.send('you said: %s', session.message.text);
+    session.endConversation();
+}]);
+
+bot.beginDialogAction('askName', '/askName', {
+    matches: /^your name$|^name$|^what is your name$|^what's your name$|/i
+});
+bot.dialog('/askName', [function (session) {
+    session.send("/askName dialog");
+    session.endConversation();
+}]);
+
